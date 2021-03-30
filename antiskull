@@ -1,0 +1,34 @@
+local frags = 1
+
+onTextMessage(function(mode, text)
+ if string.find(text, "Warning! The murder") then
+    frags = frags + 1
+end
+end)
+
+local multiTargetSpell = 'brave furie'
+local singleTargetSpell = 'impact blast'
+local distance = 3
+local amountOfMonsters = 1
+local fragLimit = 0
+
+macro(250, "anti red",  function()
+    local isSafe = true;
+    local specAmount = 0
+    if not g_game.isAttacking() then
+        return
+    end
+    for i,mob in ipairs(getSpectators()) do
+        if (getDistanceBetween(player:getPosition(), mob:getPosition())  <= distance and mob:isMonster())  then
+            specAmount = specAmount + 1
+        end
+        if (mob:isPlayer() and player:getName() ~= mob:getName()) then
+            isSafe = false;
+        end
+    end
+    if (specAmount >= amountOfMonsters and ((frags <= fragLimit) or isSafe)) then
+        say(multiTargetSpell)
+    else
+        say(singleTargetSpell)
+    end
+end)
